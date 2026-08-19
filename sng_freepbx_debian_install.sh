@@ -24,6 +24,7 @@
 set -e
 SCRIPTVER="1.15"
 ASTVERSION=${ASTVERSION:-22}
+PHPTIMEOUT=${PHPTIMEOUT:-0}
 PHPVERSION="8.2"
 LOG_FOLDER="/var/log/pbx"
 LOG_FILE="${LOG_FOLDER}/freepbx17-install-$(date '+%Y.%m.%d-%H.%M.%S').log"
@@ -1301,10 +1302,10 @@ else
   fi
 
   setCurrentStep "Installing all local modules"
-  fwconsole ma installlocal >> "$log"
+  php -d max_execution_time="$PHPTIMEOUT" -d memory_limit=-1 /usr/sbin/fwconsole ma installlocal >> "$log"
 
   setCurrentStep "Upgrading FreePBX 17 modules"
-  fwconsole ma upgradeall >> "$log"
+  php -d max_execution_time="$PHPTIMEOUT" -d memory_limit=-1 /usr/sbin/fwconsole ma upgradeall >> "$log"
 
   setCurrentStep "Reloading and restarting FreePBX 17"
   fwconsole reload >> "$log"
